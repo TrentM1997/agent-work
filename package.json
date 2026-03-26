@@ -2,6 +2,7 @@
   "name": "agent-work",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -10,6 +11,7 @@
   },
   "dependencies": {
     "@ai-sdk/react": "^3.0.135",
+    "@modelcontextprotocol/sdk": "^1.28.0",
     "@next/env": "^16.2.0",
     "ai": "^6.0.133",
     "dotenv": "^17.3.1",

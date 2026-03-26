@@ -4,7 +4,7 @@ import { ToolManager } from "./toolManager";
 import { ConversationHandler } from "./conversationHandler";
 import { tool } from "ai";
 import z from "zod";
-const OLLAMA_API_KEY = getEnv("NEXT_PUBLIC_OLLAMA_KEY");
+const OLLAMA_API_KEY = getEnv("OLLAMA_KEY");
 
 const ollama = new Ollama({
   host: "https://ollama.com",
