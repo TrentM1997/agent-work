@@ -1,51 +1,126 @@
 import { Ollama } from "ollama";
-import { ToolManager } from "./toolManager";
+import { McpClient } from "./mcpClient";
+import type { ToolRequest } from "./types";
 
 export class ConversationHandler {
   constructor(
-    private readonly toolManager: ToolManager,
-    private readonly client: Ollama,
+    private readonly agent: Ollama,
+    private readonly client: McpClient,
   ) {}
 
-  async run() {
-    await this.createSystemPrompt();
-    const prompt = await this.createMessagePrompt();
-    const response = await this.client.chat({
+  public async run(userPrompt: string): Promise<string> {
+    const tools = await this.client.listTools();
+
+    const firstResponse = await this.askModel(
+      this.createSystemPrompt(tools),
+      userPrompt,
+    );
+
+    const toolRequest = this.parseToolRequest(firstResponse);
+
+    if (!toolRequest) {
+      console.error("No tool request returned");
+      return firstResponse;
+    }
+
+    const toolResult = await this.client.callTool(
+      toolRequest.tool_name,
+      toolRequest.parameters,
+    );
+
+    return await this.askModel(
+      this.createSystemPrompt(tools),
+      `User asked: ${userPrompt}
+
+Tool result:
+${JSON.stringify(toolResult, null, 2)}
+
+Now answer the user clearly.`,
+    );
+  }
+
+  public createSystemPrompt(tools: unknown): string {
+    return `
+You are a helpful assistant with access to tools.
+
+Here are the available tools:
+${JSON.stringify(tools, null, 2)}
+
+If you need a tool, respond ONLY with JSON in this format:
+{
+  "tool_name": "...",
+  "parameters": { ... }
+}
+
+If you do not need a tool, answer normally.
+`;
+  }
+
+  public async createMessagePrompt(): Promise<string> {
+    const result = await this.client.callTool("get_weather", {
+      location: {
+        city: "Chicago",
+        state: "IL",
+        zip: "60601",
+      },
+    });
+
+    return `Here are the weather results:
+${JSON.stringify(result, null, 2)}
+
+Tell me whether Chicago sounds like a good time in these conditions.`;
+  }
+
+  private async askModel(
+    systemPrompt: string,
+    userPrompt: string,
+  ): Promise<string> {
+    const response = await this.agent.chat({
       model: "gpt-oss:120b-cloud",
-      messages: [{ role: "user", content: prompt }],
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+      ],
       stream: true,
     });
 
+    let fullResponse = "";
+
     for await (const part of response) {
-      process.stdout.write(part.message.content);
+      const chunk = part.message.content ?? "";
+      process.stdout.write(chunk);
+      fullResponse += chunk;
     }
+
+    return fullResponse;
   }
 
-  async createSystemPrompt() {
-    const prompt = `
-You are a helpful assistant with access to the following tools.
-To use a tool, you must respond with a JSON object with two keys: "tool_name" and "parameters".
+  private parseToolRequest(response: string): ToolRequest | null {
+    let parsed: unknown;
 
-Here are the available tools: ${this.toolManager.tools}
+    try {
+      parsed = JSON.parse(response);
+    } catch {
+      return null;
+    }
 
-If you decide to use a tool, your response MUST be only the JSON object.
-If you don't need a tool, answer the user's question directly.
-`;
+    if (!parsed || typeof parsed !== "object") {
+      return null;
+    }
 
-    return prompt;
-  }
+    const candidate = parsed as Record<string, unknown>;
 
-  async createMessagePrompt() {
-    const controller = new AbortController();
-    const result = await this.toolManager.executeTool(
-      "Get the weather in a location",
-      { city: "Chicago", state: "Illinois", zip: "60601" },
-      controller.signal,
-    );
+    if (typeof candidate.tool_name !== "string") {
+      return null;
+    }
 
-    return `First, please tell me these results: 
-    ${JSON.stringify(result)}
-    — then, tell me if the city is known to be a good time or not in these conditions
-    `;
+    if (!candidate.parameters || typeof candidate.parameters !== "object") {
+      return null;
+    }
+
+    return {
+      tool_name: candidate.tool_name,
+      parameters: candidate.parameters as Record<string, unknown>,
+    };
   }
 }

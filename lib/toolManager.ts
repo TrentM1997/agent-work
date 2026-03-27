@@ -1,5 +1,5 @@
 import type { Tool } from "ai";
-
+import { type ChildProcessWithoutNullStreams } from "child_process";
 export type WeatherLocale = {
   city: string;
   state: string;
@@ -9,7 +9,7 @@ export type WeatherLocale = {
 export class ToolManager {
   public tools: Record<string, Tool>;
 
-  constructor() {
+  constructor(private readonly server: ChildProcessWithoutNullStreams) {
     this.tools = {};
   }
 

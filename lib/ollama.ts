@@ -1,9 +1,9 @@
 import { getEnv } from "./config";
 import { Ollama } from "ollama";
-import { ToolManager } from "./toolManager";
 import { ConversationHandler } from "./conversationHandler";
-import { tool } from "ai";
-import z from "zod";
+import { spawn } from "child_process";
+import { McpClient } from "./mcpClient";
+
 const OLLAMA_API_KEY = getEnv("OLLAMA_KEY");
 
 const ollama = new Ollama({
@@ -13,36 +13,17 @@ const ollama = new Ollama({
   },
 });
 
-const weatherTool = tool({
-  description: "Get the weather in a location",
-  inputSchema: z
-    .object({
-      location: z.object({
-        city: z.string(),
-        state: z.string(),
-        zip: z.string(),
-      }),
-    })
-    .describe(
-      "The City, State, and zipcode of the location we'll be getting the weather for",
-    ),
-  execute: async ({ location }) => {
-    return {
-      temp: 72,
-      conditions: "sunny",
-      location: `${location.city} ${location.state}, ${location.zip}`,
-    };
-  },
-});
-
-const availableTools = new ToolManager();
+const server = spawn("npx", ["tsx", "./lib/server.ts"], { shell: true });
 
 async function chat(): Promise<void> {
-  availableTools.registerTool(weatherTool);
-  const conversation = new ConversationHandler(availableTools, ollama);
-
-  conversation.createSystemPrompt();
-  conversation.run();
+  const client = new McpClient(server);
+  const conversation = new ConversationHandler(ollama, client);
+  const userPrompt = await conversation.createMessagePrompt();
+  try {
+    await conversation.run(userPrompt);
+  } finally {
+    server.kill();
+  }
 }
 
 chat().catch(console.error);
