@@ -1,7 +1,7 @@
 import { agent } from "./ollama";
-import { ConversationHandler } from "./conversationHandler";
+import { ConversationHandler } from "../modules/conversationHandler";
 import { spawn } from "child_process";
-import { McpClient } from "./mcpClient";
+import { McpClient } from "../modules/mcpClient";
 
 const server = spawn("npx", ["tsx", "./lib/server.ts"], { shell: true });
 

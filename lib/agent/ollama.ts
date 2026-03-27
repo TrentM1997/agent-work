@@ -1,4 +1,4 @@
-import { getEnv } from "./config";
+import { getEnv } from "../init/getEnv";
 import { Ollama } from "ollama";
 
 const OLLAMA_API_KEY = getEnv("OLLAMA_KEY");
