@@ -57,7 +57,7 @@ If you do not need a tool, answer normally.
   }
 
   public async createMessagePrompt(): Promise<string> {
-    const result = await this.client.callTool("get_weather", {
+    const result = await this.client.callTool("open_weather_api", {
       location: {
         city: "Chicago",
         state: "IL",

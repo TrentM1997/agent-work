@@ -1,9 +1,9 @@
-import { agent } from "./ollama";
-import { ConversationHandler } from "../modules/conversationHandler";
+import { agent } from "@/server/ollama";
+import { ConversationHandler } from "@/lib/modules/handlers/conversationHandler";
 import { spawn } from "child_process";
-import { McpClient } from "../modules/mcpClient";
+import { McpClient } from "../modules/clients/mcpClient";
 
-const server = spawn("npx", ["tsx", "./lib/server.ts"], { shell: true });
+const server = spawn("npx", ["tsx", "./server/server.ts"], { shell: true });
 
 export async function chat(): Promise<string> {
   const client = new McpClient(server);

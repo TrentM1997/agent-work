@@ -1,9 +1,10 @@
 "use client";
 import Image from "next/image";
-import AgentChat from "@/components/agentChat";
 import { useGetWeather } from "@/lib/hooks/useGetWeather";
 import { useGetMacbookPrice } from "@/lib/hooks/useGetMacbookPrice";
 import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import { Message } from "@/components/weatherMarkdown";
 
 export default function Home() {
   const { getWeather, results } = useGetWeather();
@@ -22,7 +23,7 @@ export default function Home() {
             }}
             onClick={getWeather}
             type="button"
-            className="flex h-12 w-full text-sm items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
+            className="flex h-12 w-full text-sm items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-39.5"
             rel="noopener noreferrer"
           >
             <Image
@@ -37,7 +38,7 @@ export default function Home() {
           <a
           onClick={getMacPricing}
             href="#"
-            className="flex text-sm h-12 w-full items-center justify-center rounded-full border border-solid border-black/8 px-5 transition-colors hover:border-transparent hover:bg-black/4 dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
+            className="flex text-sm h-12 w-full items-center justify-center rounded-full border border-solid border-black/8 px-5 transition-colors hover:border-transparent hover:bg-black/4 dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-39.5"
             rel="noopener noreferrer"
           >
             Macbook Pricing
@@ -45,9 +46,11 @@ export default function Home() {
         </div>
       <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-start gap-12 px-16 bg-white dark:bg-black sm:items-start">
 
-    
-        
-      <AgentChat />
+            
+     <Stack>
+            <Message content={results} />
+      </Stack>   
+     
       </main>
         
 

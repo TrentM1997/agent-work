@@ -1,6 +1,9 @@
 import "./envConfig";
 
-type EnvironmentVariable = "OLLAMA_KEY" | "AI_GATEWAY_KEY";
+type EnvironmentVariable =
+  | "OLLAMA_KEY"
+  | "AI_GATEWAY_KEY"
+  | "OPEN_WEATHER_API_KEY";
 
 export function getEnv(env: EnvironmentVariable) {
   switch (env) {
@@ -9,6 +12,9 @@ export function getEnv(env: EnvironmentVariable) {
     }
     case "AI_GATEWAY_KEY": {
       return process.env.AI_GATEWAY_KEY;
+    }
+    case "OPEN_WEATHER_API_KEY": {
+      return process.env.OPEN_WEATHER_API_KEY;
     }
   }
 }

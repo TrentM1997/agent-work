@@ -1,6 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
+import { WeatherService } from "@/lib/modules/services/weatherService";
 
 const server = new McpServer({
   name: "weather-server",
@@ -32,6 +33,29 @@ server.registerTool(
           }),
         },
       ],
+    };
+  },
+);
+server.registerTool(
+  "open_weather_api",
+  {
+    title: "Get the weather",
+    description: "Get the weather from the Open Weather API",
+    inputSchema: {
+      location: z.object({
+        city: z.string(),
+        state: z.string(),
+        zip: z.string(),
+      }),
+    },
+  },
+  async ({ location }) => {
+    const weatherApi = new WeatherService();
+
+    const weather = await weatherApi.getWeather(location);
+
+    return {
+      content: [{ type: "text", text: JSON.stringify(weather, null, 2) }],
     };
   },
 );
