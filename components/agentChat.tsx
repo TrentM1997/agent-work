@@ -7,7 +7,7 @@ export default function AgentChat() {
   const [input, setInput] = useState('');
   const { messages, sendMessage } = useChat();
   return (
-    <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch border border-zinc-400 rounded-b-md h-60 overflow-y-scroll scroll-auto">
+    <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch border border-zinc-400 rounded-b-md h-96 overflow-y-scroll scroll-auto">
       {messages.map(message => (
         <div key={message.id} className="whitespace-pre-wrap">
           {message.role === 'user' ? 'User: ' : 'AI: '}

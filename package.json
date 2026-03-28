@@ -10,7 +10,12 @@
   },
   "dependencies": {
     "@ai-sdk/react": "^3.0.135",
+    "@emotion/cache": "^11.14.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@modelcontextprotocol/sdk": "^1.28.0",
+    "@mui/material": "^7.3.9",
+    "@mui/material-nextjs": "^7.3.9",
     "@next/env": "^16.2.0",
     "ai": "^6.0.133",
     "dotenv": "^17.3.1",
