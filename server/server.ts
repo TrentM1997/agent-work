@@ -1,7 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-import { WeatherService } from "@/lib/modules/services/weatherService";
+import { WeatherService } from "@/server/lib/modules/services/weatherService";
 
 const server = new McpServer({
   name: "weather-server",
