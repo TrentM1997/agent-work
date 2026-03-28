@@ -1,6 +1,6 @@
 import { Ollama } from "ollama";
 import { McpClient } from "./mcpClient";
-import type { ToolRequest } from "./types";
+import type { ToolRequest } from "../types";
 
 export class ConversationHandler {
   constructor(

@@ -1,0 +1,14 @@
+import { streamText, UIMessage, convertToModelMessages } from "ai";
+
+export async function POST(req: Request) {
+  const { messages }: { messages: UIMessage[] } = await req.json();
+
+  console.log(messages);
+
+  const result = streamText({
+    model: "anthropic/claude-sonnet-4.5",
+    messages: await convertToModelMessages(messages),
+  });
+
+  return result.toUIMessageStreamResponse();
+}
