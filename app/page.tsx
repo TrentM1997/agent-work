@@ -1,16 +1,12 @@
 "use client";
 import Image from "next/image";
 import { useGetWeather } from "@/lib/hooks/useGetWeather";
-import { useGetMacbookPrice } from "@/lib/hooks/useGetMacbookPrice";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import { Message } from "@/components/weatherMarkdown";
 
 export default function Home() {
   const { getWeather, results } = useGetWeather();
-  const { pricing, getMacPricing } = useGetMacbookPrice();
-
-  console.log(pricing)
 
   return (
     <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
@@ -35,14 +31,7 @@ export default function Home() {
             />
             Get Weather
           </Button>
-          <a
-          onClick={getMacPricing}
-            href="#"
-            className="flex text-sm h-12 w-full items-center justify-center rounded-full border border-solid border-black/8 px-5 transition-colors hover:border-transparent hover:bg-black/4 dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-39.5"
-            rel="noopener noreferrer"
-          >
-            Macbook Pricing
-          </a>
+          
         </div>
       <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-start gap-12 px-16 bg-white dark:bg-black sm:items-start">
 
