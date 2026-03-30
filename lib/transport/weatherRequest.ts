@@ -1,5 +1,5 @@
 import type { LocationRequestedSchemaType } from "@/schemas/weatherSchema";
-import type { AgentRequestConfig } from "../config/agentRequestConfig";
+import type { AgentRequestConfig } from "../config/config";
 import type { ChatResponse } from "@/server/lib/agent/types";
 
 function createWeatherRequest(config: AgentRequestConfig) {
