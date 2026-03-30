@@ -1,7 +1,7 @@
 import type { WeatherResultsType } from "@/lib/hooks/useGetWeather";
-import { AgentMessage } from "../AgentMessage";
-import SimpleBackdrop from "../simpleBackgrop";
-import AgentRunErrorAlert from "../agentRunErrorAlert";
+import { AgentMessage } from "../agent/AgentMessage";
+import SimpleBackdrop from "../feedback/simpleBackgrop";
+import AgentRunErrorAlert from "../feedback/agentRunErrorAlert";
 
 
 export default function RenderAgentMessage({results} :{results: WeatherResultsType}) {
