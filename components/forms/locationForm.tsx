@@ -1,4 +1,4 @@
-import { GetWeatherHook } from '@/lib/hooks/useGetWeather';
+import { GetWeatherHook } from '@/lib/types';
 import { styled } from '@mui/material/styles';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -13,16 +13,12 @@ const FormGrid = styled(Grid)(() => ({
 }));
 
 type LocationFormProps = {
-    getCityInput: GetWeatherHook["getCityInput"],
-    getStateInput: GetWeatherHook["getStateInput"],
-    getZipInput: GetWeatherHook["getZipInput"],
+    getInput: GetWeatherHook["getInput"]
       getWeather: () => Promise<void>;
 }
 
 export default function LocationForm({
-    getCityInput,
-    getStateInput,
-    getZipInput,
+    getInput,
     getWeather
  }: LocationFormProps) {
   return (
@@ -34,19 +30,22 @@ export default function LocationForm({
       <FormGrid size={{ xs: 6 }}>
         <FormInputLabel inputLabel='city' />
         <FormInput 
-        getInput={getCityInput}
+        getInput={getInput}
+        stateProperty="city"
         />
       </FormGrid>
       <FormGrid size={{ xs: 6 }}>
         <FormInputLabel inputLabel='state' />
           <FormInput 
-          getInput={getStateInput}
+          getInput={getInput}
+        stateProperty="city"
           />
       </FormGrid>
       <FormGrid size={{ xs: 6 }}>
         <FormInputLabel inputLabel='Zipcode/Postal code' />
         <FormInput 
-        getInput={getZipInput}
+        getInput={getInput}
+        stateProperty="city"
         />
       </FormGrid>
       

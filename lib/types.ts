@@ -1,24 +1,32 @@
-type JsonRpcSuccess = {
-  jsonrpc: "2.0";
-  id: number;
-  result: unknown;
+export type LocationInputState = {
+  city: string;
+  state: string;
+  zip: string;
 };
 
-type JsonRpcError = {
-  jsonrpc: "2.0";
-  id: number;
-  error: {
-    code: number;
-    message: string;
-    data?: unknown;
-  };
+export type WeatherResultsType =
+  | {
+      status: "initial";
+    }
+  | {
+      status: "pending";
+    }
+  | {
+      status: "ready";
+      message: string;
+    }
+  | {
+      status: "failed";
+      error: string;
+    };
+
+export type GetTargetValueField = keyof LocationInputState;
+
+export type GetWeatherHook = {
+  results: WeatherResultsType;
+  getWeather: () => Promise<void>;
+  getInput: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement, Element>,
+    inputField: GetTargetValueField,
+  ) => void;
 };
-
-type JsonRpcResponse = JsonRpcSuccess | JsonRpcError;
-
-type ToolRequest = {
-  tool_name: string;
-  parameters: Record<string, unknown>;
-};
-
-export type { JsonRpcResponse, JsonRpcSuccess, JsonRpcError, ToolRequest };

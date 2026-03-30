@@ -1,5 +1,5 @@
 import type { ChildProcessWithoutNullStreams } from "child_process";
-import type { JsonRpcResponse } from "@/lib/types";
+import type { JsonRpcResponse } from "@/server/lib/types";
 
 export class McpTransportClient {
   private nextId = 1;

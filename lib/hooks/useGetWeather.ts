@@ -3,8 +3,9 @@ import type {
   GetWeatherHook,
   WeatherResultsType,
   LocationInputState,
-} from "@/server/lib/types";
-import { weatherRequest } from "../api/requests";
+  GetTargetValueField,
+} from "@/lib/types";
+import { agentApi } from "@/lib/config/agentRequest";
 
 export const useGetWeather = (): GetWeatherHook => {
   const [location, setLocation] = useState<LocationInputState>({
@@ -16,62 +17,37 @@ export const useGetWeather = (): GetWeatherHook => {
     status: "initial",
   });
 
-  const getCityInput = (
+  const getInput = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    inputField: GetTargetValueField,
   ) => {
     const value = e.target.value;
-    const cityInput = value.toLowerCase().trim();
-
+    const cleansedInput = value.toLowerCase().trim();
+    const field = inputField;
     setLocation((prev: LocationInputState) => ({
       ...prev,
-      city: cityInput,
+      [field]: cleansedInput,
     }));
   };
 
-  const getStateInput = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const value = e.target.value;
-    const stateInput = value.toLowerCase().trim();
-
-    setLocation((prev: LocationInputState) => ({
-      ...prev,
-      state: stateInput,
-    }));
-  };
-
-  const getZipInput = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const value = e.target.value;
-    const zipInput = value.toLowerCase().trim();
-
-    setLocation((prev: LocationInputState) => ({
-      ...prev,
-      zip: zipInput,
-    }));
-  };
-
-  const submit = async () => {
+  const getWeather = async () => {
     setResults({ status: "pending" });
 
-    const request = await weatherRequest(location);
-
-    if (request.ok) {
-      setResults({ status: "ready", message: request.message });
-    } else {
+    const response = await agentApi.getWeatherReport(location);
+    if (!response.ok) {
       setResults({
         status: "failed",
-        error: `Agent run failed to retrieve a weather report for ${location.city}`,
+        error: response.error,
       });
+      return;
     }
+
+    setResults({ status: "ready", message: response.message });
   };
 
   return {
     results,
-    getWeather: submit,
-    getCityInput,
-    getStateInput,
-    getZipInput,
+    getWeather,
+    getInput,
   };
 };

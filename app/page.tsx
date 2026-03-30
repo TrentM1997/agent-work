@@ -6,7 +6,7 @@ import Container from "@mui/material/Container";
 import RenderAgentMessage from "@/components/pipelines/renderAgentMessage";
 
 export default function Home() {
-  const { getWeather, results, getCityInput, getStateInput, getZipInput } =
+  const { getWeather, results, getInput } =
     useGetWeather();
 
   return (
@@ -20,10 +20,8 @@ export default function Home() {
     >
       <Stack direction={"column"} alignItems={"center"}>
         <LocationForm
-          getCityInput={getCityInput}
-          getStateInput={getStateInput}
-          getZipInput={getZipInput}
           getWeather={getWeather}
+          getInput={getInput}
         />
       </Stack>
 
