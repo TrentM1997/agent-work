@@ -5,7 +5,7 @@ const shimmer = keyframes`
   100% { background-position: 200% 0; }
 `;
 
-const ShimmerTypography = styled(Typography)(({ theme }) => ({
+const ShimmerTypography = styled(Typography)(({ }) => ({
   display: 'inline-block',
   background: `linear-gradient(
     90deg, 

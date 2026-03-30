@@ -1,40 +1,10 @@
 import { useState } from "react";
-
-type LocationInputState = {
-  city: string;
-  state: string;
-  zip: string;
-};
-
-export type WeatherResultsType =
-  | {
-      status: "initial";
-    }
-  | {
-      status: "pending";
-    }
-  | {
-      status: "ready";
-      message: string;
-    }
-  | {
-      status: "failed";
-      error: string;
-    };
-
-export type GetWeatherHook = {
-  results: WeatherResultsType;
-  getWeather: () => Promise<void>;
-  getCityInput: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement, Element>,
-  ) => void;
-  getStateInput: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement, Element>,
-  ) => void;
-  getZipInput: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement, Element>,
-  ) => void;
-};
+import type {
+  GetWeatherHook,
+  WeatherResultsType,
+  LocationInputState,
+} from "@/server/lib/types";
+import { weatherRequest } from "../api/requests";
 
 export const useGetWeather = (): GetWeatherHook => {
   const [location, setLocation] = useState<LocationInputState>({
@@ -66,7 +36,7 @@ export const useGetWeather = (): GetWeatherHook => {
 
     setLocation((prev: LocationInputState) => ({
       ...prev,
-      city: stateInput,
+      state: stateInput,
     }));
   };
 
@@ -78,43 +48,28 @@ export const useGetWeather = (): GetWeatherHook => {
 
     setLocation((prev: LocationInputState) => ({
       ...prev,
-      city: zipInput,
+      zip: zipInput,
     }));
   };
 
-  const getWeather = async () => {
+  const submit = async () => {
     setResults({ status: "pending" });
 
-    try {
-      const request = await fetch("/api/weather", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(location),
-      });
+    const request = await weatherRequest(location);
 
-      if (!request.ok) {
-        throw new Error(request.statusText);
-      }
-
-      const res = await request.json();
-      setResults({ status: "ready", message: res });
-    } catch (err) {
-      console.error(err);
+    if (request.ok) {
+      setResults({ status: "ready", message: request.message });
+    } else {
       setResults({
         status: "failed",
-        error:
-          typeof err === "string"
-            ? err
-            : "Unkown error encountered with agent run response",
+        error: `Agent run failed to retrieve a weather report for ${location.city}`,
       });
     }
   };
 
   return {
     results,
-    getWeather,
+    getWeather: submit,
     getCityInput,
     getStateInput,
     getZipInput,

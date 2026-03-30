@@ -1,4 +1,4 @@
-import type { WeatherResultsType } from "@/lib/hooks/useGetWeather";
+import type { WeatherResultsType } from "@/server/lib/types";
 import { AgentMessage } from "../agent/AgentMessage";
 import AgentRunErrorAlert from "../feedback/agentRunErrorAlert";
 import ShimmerText from "../feedback/shimmerText";
@@ -9,10 +9,14 @@ export default function RenderAgentMessage({
 }: {
   results: WeatherResultsType;
 }) {
+
   switch (results.status) {
     case "pending": {
       return (
-        <Fade in={results.status === "pending"}>
+        <Fade 
+        timeout={300}
+        in={results.status === "pending"}
+        >
             <div>
             <ShimmerText />
             </div>
@@ -21,9 +25,7 @@ export default function RenderAgentMessage({
     }
     case "ready": {
       return (
-        <Fade in={results.status === "ready"}>
           <AgentMessage content={results.message} />
-        </Fade>
       );
     }
     case "failed": {
