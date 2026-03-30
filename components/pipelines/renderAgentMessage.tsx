@@ -1,7 +1,7 @@
 import type { WeatherResultsType } from "@/lib/hooks/useGetWeather";
 import { AgentMessage } from "../agent/AgentMessage";
-import SimpleBackdrop from "../feedback/simpleBackgrop";
 import AgentRunErrorAlert from "../feedback/agentRunErrorAlert";
+import ShimmerText from "../feedback/shimmerText";
 
 
 export default function RenderAgentMessage({results} :{results: WeatherResultsType}) {
@@ -10,9 +10,7 @@ export default function RenderAgentMessage({results} :{results: WeatherResultsTy
 
         case "pending": {
             return (
-                <SimpleBackdrop 
-                status={results.status}
-                />
+                <ShimmerText />
             )
         }
         case "ready": {

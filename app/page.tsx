@@ -33,7 +33,7 @@ export default function Home() {
       
         <Stack 
         direction={"row"}
-        alignItems={"center"}
+        alignItems={"start"}
         justifyContent={"start"}
         sx={{
       border: 1,

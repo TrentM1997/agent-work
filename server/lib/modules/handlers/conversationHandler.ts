@@ -1,4 +1,4 @@
-import { Message, Ollama } from "ollama";
+import { Ollama } from "ollama";
 import { McpClient } from "@/server/lib/modules/clients/mcpClient";
 import type { ToolRequest } from "@/server/lib/types";
 import { LocationRequestedSchemaType } from "@/schemas/weatherSchema";
