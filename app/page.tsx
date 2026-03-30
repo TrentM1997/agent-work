@@ -40,7 +40,7 @@ export default function Home() {
       borderColor: "rgba(4, 59, 92, 0.5)",
       borderRadius: 2,
       padding: 2,
-      minHeight: "600px",
+      minHeight: "400px",
       minWidth: "500px",
       marginTop: 8
     }}

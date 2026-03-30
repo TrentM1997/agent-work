@@ -21,4 +21,18 @@ type ToolRequest = {
   parameters: Record<string, unknown>;
 };
 
-export type { JsonRpcResponse, JsonRpcSuccess, JsonRpcError, ToolRequest };
+type Decision =
+  | { kind: "final"; content: string }
+  | {
+      kind: "tool_call";
+      toolName: string;
+      parameters: Record<string, unknown>;
+    };
+
+export type {
+  JsonRpcResponse,
+  JsonRpcSuccess,
+  JsonRpcError,
+  ToolRequest,
+  Decision,
+};

@@ -1,4 +1,4 @@
-import { Ollama } from "ollama";
+import { Message, Ollama } from "ollama";
 import { McpClient } from "@/server/lib/modules/clients/mcpClient";
 import type { ToolRequest } from "@/server/lib/types";
 import { LocationRequestedSchemaType } from "@/schemas/weatherSchema";
@@ -11,50 +11,53 @@ export class ConversationHandler {
 
   public async run(userPrompt: string): Promise<string> {
     const tools = await this.client.listTools();
+    const systemPrompt = this.createSystemPrompt(tools);
 
-    const firstResponse = await this.askModel(
-      this.createSystemPrompt(tools),
-      userPrompt,
-    );
-
-    const toolRequest = this.parseToolRequest(firstResponse);
-
-    if (!toolRequest) {
-      console.error("No tool request returned");
-      return firstResponse;
-    }
-
-    const toolResult = await this.client.callTool(
-      toolRequest.tool_name,
-      toolRequest.parameters,
-    );
-
-    return await this.askModel(
-      this.createSystemPrompt(tools),
-      `User asked: ${userPrompt}
-
-Tool result:
-${JSON.stringify(toolResult, null, 2)}
-
-Now answer the user clearly.`,
-    );
+    return await this.executeDecisionLoop(systemPrompt, userPrompt);
   }
 
-  public createSystemPrompt(tools: unknown): string {
+  private async executeDecisionLoop(
+    systemPrompt: string,
+    userPrompt: string,
+  ): Promise<string> {
+    const maxIterations = 5;
+    let currentPrompt = userPrompt;
+
+    for (let i = 0; i < maxIterations; i++) {
+      const response = await this.askModel(systemPrompt, currentPrompt);
+      const toolRequest = this.parseToolRequest(response);
+
+      if (!toolRequest) {
+        return response;
+      }
+
+      const toolResult = await this.client.callTool(
+        toolRequest.tool_name,
+        toolRequest.parameters,
+      );
+
+      currentPrompt = `User asked: ${userPrompt}
+      Tool result:
+      ${JSON.stringify(toolResult, null, 2)}
+      If you need another tool, request it.
+      Otherwise, answer the user clearly.`;
+    }
+
+    throw new Error("Max iterations reached");
+  }
+
+  private createSystemPrompt(tools: unknown): string {
     return `
-You are a helpful assistant with access to tools.
-
-Here are the available tools:
-${JSON.stringify(tools, null, 2)}
-
-If you need a tool, respond ONLY with JSON in this format:
-{
-  "tool_name": "...",
-  "parameters": { ... }
-}
-
-If you do not need a tool, answer normally.
-`;
+            You are a helpful assistant with access to tools.
+            Here are the available tools:
+            ${JSON.stringify(tools, null, 2)}
+            If you need a tool, respond ONLY with JSON in this format:
+            {
+              "tool_name": "...",
+              "parameters": { ... }
+            }
+            If you do not need a tool, answer normally.
+            `;
   }
 
   public async createMessagePrompt(
