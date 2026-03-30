@@ -12,6 +12,7 @@ export default function FormInput({
 
     return (
         <OutlinedInput
+        autoComplete="off"
         onChange={(e) => getInput(e)}
         sx={{
           border: 1,

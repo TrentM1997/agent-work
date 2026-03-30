@@ -1,12 +1,12 @@
 import { Ollama } from "ollama";
-import { McpClient } from "@/server/lib/modules/clients/mcpClient";
+import { McpTransportClient } from "@/server/lib/modules/clients/mcpTransportClient";
 import type { ToolRequest } from "@/server/lib/types";
 import { LocationRequestedSchemaType } from "@/schemas/weatherSchema";
 
 export class ConversationHandler {
   constructor(
     private readonly agent: Ollama,
-    private readonly client: McpClient,
+    private readonly client: McpTransportClient,
   ) {}
 
   public async run(userPrompt: string): Promise<string> {

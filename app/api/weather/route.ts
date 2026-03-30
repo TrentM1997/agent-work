@@ -1,6 +1,6 @@
 import { validateRequestBody } from "@/lib/utils/validationResult";
 import { LocationRequestedSchema } from "@/schemas/weatherSchema";
-import { chat } from "@/server/lib/agent/chat";
+import { chat } from "@/server/lib/agent";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {

@@ -4,34 +4,6 @@ import {
   OpenMeteoWeatherResultType,
 } from "@/schemas/weatherSchema";
 
-export type OpenMeteoGeocodeResult = {
-  name: string;
-  country?: string;
-  admin1?: string;
-  latitude: number;
-  longitude: number;
-};
-
-export type OpenMeteoWeatherResult = {
-  timezone: string;
-  current: {
-    time: string;
-    temperature_2m: number;
-    apparent_temperature?: number;
-    relative_humidity_2m?: number;
-    wind_speed_10m?: number;
-    wind_direction_10m?: number;
-    weather_code: number;
-    is_day: number;
-  };
-  daily?: {
-    temperature_2m_max?: number[];
-    temperature_2m_min?: number[];
-    precipitation_probability_max?: number[];
-    weather_code?: number[];
-  };
-};
-
 export class WeatherResponseHandler {
   constructor() {}
 

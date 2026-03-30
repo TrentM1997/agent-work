@@ -11,43 +11,38 @@ export default function Home() {
 
   return (
     <Container
-    sx={{
-      backgroundColor: "rgba(11, 15, 20, 1)",
-      height: "100%",
-      width: "100%",
-      flexGrow: 1
-    }}
+      sx={{
+        backgroundColor: "rgba(11, 15, 20, 1)",
+        height: "100%",
+        width: "100%",
+        flexGrow: 1,
+      }}
     >
-
-
-
-<Stack direction={"column"} alignItems={"center"}>
-        <LocationForm 
-        getCityInput={getCityInput}
-        getStateInput={getStateInput}
-        getZipInput={getZipInput}
-        getWeather={getWeather}
+      <Stack direction={"column"} alignItems={"center"}>
+        <LocationForm
+          getCityInput={getCityInput}
+          getStateInput={getStateInput}
+          getZipInput={getZipInput}
+          getWeather={getWeather}
         />
       </Stack>
 
-      
-        <Stack 
+      <Stack
         direction={"row"}
         alignItems={"start"}
         justifyContent={"start"}
         sx={{
-      border: 1,
-      borderColor: "rgba(4, 59, 92, 0.5)",
-      borderRadius: 2,
-      padding: 2,
-      minHeight: "400px",
-      minWidth: "500px",
-      marginTop: 8
-    }}
-        >
+          border: 1,
+          borderColor: "rgba(4, 59, 92, 0.5)",
+          borderRadius: 2,
+          padding: 2,
+          minHeight: "400px",
+          minWidth: "500px",
+          marginTop: 8,
+        }}
+      >
           <RenderAgentMessage results={results} />
-        </Stack>
+      </Stack>
     </Container>
-    
   );
 }

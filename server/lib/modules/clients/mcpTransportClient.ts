@@ -1,7 +1,7 @@
 import type { ChildProcessWithoutNullStreams } from "child_process";
 import type { JsonRpcResponse } from "@/lib/types";
 
-export class McpClient {
+export class McpTransportClient {
   private nextId = 1;
   private buffer = "";
   private pending = new Map<
