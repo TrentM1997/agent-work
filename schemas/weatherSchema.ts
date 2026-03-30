@@ -57,6 +57,16 @@ export const GetWeatherForCityInputSchema = z.object({
   country: z.string().optional(),
 });
 
+export const LocationRequestedSchema = z.object({
+  city: z.string().min(1),
+  state: z.string(),
+  zip: z.string(),
+});
+
+export type LocationRequestedSchemaType = z.infer<
+  typeof LocationRequestedSchema
+>;
+
 export type GetWeatherForCityInputSchemaType = z.infer<
   typeof GetWeatherForCityInputSchema
 >;

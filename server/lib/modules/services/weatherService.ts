@@ -4,8 +4,8 @@ import {
   GetWeatherResponseSchemaType,
   WeatherForCityResultSchema,
   WeatherForCityResultType,
-} from "../../utils/weatherSchema";
-import { WeatherResponseHandler } from "@/lib/modules/handlers/weatherResponseHandler";
+} from "@/schemas/weatherSchema";
+import { WeatherResponseHandler } from "@/server/lib/modules/handlers/weatherResponseHandler";
 
 export class WeatherService {
   private readonly parser: WeatherResponseHandler;

@@ -2,7 +2,7 @@ import {
   WeatherForCityResultType,
   OpenMeteoGeocodeResultType,
   OpenMeteoWeatherResultType,
-} from "../utils/weatherSchema";
+} from "@/schemas/weatherSchema";
 
 export type OpenMeteoGeocodeResult = {
   name: string;

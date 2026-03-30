@@ -1,6 +1,7 @@
 import { Ollama } from "ollama";
-import { McpClient } from "./mcpClient";
-import type { ToolRequest } from "../types";
+import { McpClient } from "@/server/lib/modules/clients/mcpClient";
+import type { ToolRequest } from "@/server/lib/types";
+import { LocationRequestedSchemaType } from "@/schemas/weatherSchema";
 
 export class ConversationHandler {
   constructor(
@@ -56,19 +57,17 @@ If you do not need a tool, answer normally.
 `;
   }
 
-  public async createMessagePrompt(): Promise<string> {
+  public async createMessagePrompt(
+    locationRequested: LocationRequestedSchemaType,
+  ): Promise<string> {
     const result = await this.client.callTool("open_weather_api", {
-      location: {
-        city: "Chicago",
-        state: "IL",
-        zip: "60601",
-      },
+      location: locationRequested,
     });
 
     return `Here are the weather results:
 ${JSON.stringify(result, null, 2)}
 
-Tell me whether Chicago sounds like a good time in these conditions.`;
+Tell me whether the city sounds like a good time in these conditions.`;
   }
 
   private async askModel(
