@@ -3,12 +3,14 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 
 type FormInputProps = {
     getInput: GetWeatherHook["getInput"],
-    stateProperty: GetTargetValueField 
+    stateProperty: GetTargetValueField,
+    placeholderText?: string 
 }
 
 export default function FormInput({
     getInput,
-    stateProperty
+    stateProperty,
+    placeholderText
 }: FormInputProps) {
 
     return (
@@ -24,7 +26,7 @@ export default function FormInput({
           id="zip"
           name="zip"
           type="zip"
-          placeholder="12345"
+          placeholder={placeholderText ?? "type here..."}
           required
           size="small"
         />

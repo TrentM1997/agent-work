@@ -4,6 +4,7 @@ import Stack from "@mui/material/Stack";
 import LocationForm from "@/components/forms/locationForm";
 import Container from "@mui/material/Container";
 import RenderAgentMessage from "@/components/pipelines/renderAgentMessage";
+import GetWeatherButton from "@/components/forms/getWeatherButton";
 
 export default function Home() {
   const { getWeather, results, getInput } =
@@ -18,11 +19,17 @@ export default function Home() {
         flexGrow: 1,
       }}
     >
-      <Stack direction={"column"} alignItems={"center"}>
+      <Stack 
+      direction={"column"} 
+      alignItems={"start"} 
+      justifyContent={"center"} 
+      gap={2}
+      >
         <LocationForm
           getWeather={getWeather}
           getInput={getInput}
         />
+        <GetWeatherButton getWeather={getWeather} />
       </Stack>
 
       <Stack
