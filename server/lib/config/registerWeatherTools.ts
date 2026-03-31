@@ -1,6 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { z } from "zod";
 import { WeatherService } from "@/server/lib/modules/services/weatherService";
+import { LocationRequestedSchema } from "@/schemas/weatherSchema";
 
 type RegisterWeatherToolsArgs = {
   server: McpServer;
@@ -17,11 +17,7 @@ export function registerWeatherTools({
       title: "Get the weather",
       description: "Get the weather from the Open Weather API",
       inputSchema: {
-        location: z.object({
-          city: z.string(),
-          state: z.string(),
-          zip: z.string(),
-        }),
+        location: LocationRequestedSchema,
       },
     },
     async ({ location }) => {

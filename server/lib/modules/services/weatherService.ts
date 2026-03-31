@@ -2,6 +2,7 @@ import {
   GetWeatherForCityInputSchemaType,
   GetWeatherResponseSchema,
   GetWeatherResponseSchemaType,
+  LocationRequestedSchemaType,
   WeatherForCityResultSchema,
   WeatherForCityResultType,
 } from "@/schemas/weatherSchema";
@@ -14,7 +15,7 @@ export class WeatherService {
   }
 
   public async getWeather(
-    input: GetWeatherForCityInputSchemaType,
+    input: LocationRequestedSchemaType,
   ): Promise<WeatherForCityResultType> {
     const raw = await this.getWeatherForCity(input);
     const weather = this.parser.parse(raw.geocode, raw.weather);
@@ -22,12 +23,12 @@ export class WeatherService {
   }
 
   private async getWeatherForCity(
-    input: GetWeatherForCityInputSchemaType,
+    input: LocationRequestedSchemaType,
   ): Promise<GetWeatherResponseSchemaType> {
     const geocodeUrl = new URL(
       "https://geocoding-api.open-meteo.com/v1/search",
     );
-    geocodeUrl.searchParams.set("name", input.city);
+    geocodeUrl.searchParams.set("name", `${input.city}, ${input.state}, USA`);
     geocodeUrl.searchParams.set("count", "1");
     geocodeUrl.searchParams.set("language", "en");
     geocodeUrl.searchParams.set("format", "json");
