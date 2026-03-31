@@ -1,7 +1,7 @@
 import type { JSX } from 'react';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-import { WeatherResultsType } from '@/lib/hooks/useGetWeather';
+import { WeatherResultsType } from "@/lib/types"
 
 export default function SimpleBackdrop({ status}: { status: WeatherResultsType["status"]}): JSX.Element {
 

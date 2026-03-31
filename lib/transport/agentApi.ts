@@ -1,30 +1,23 @@
 import type { LocationRequestedSchemaType } from "@/schemas/weatherSchema";
-import type { AgentRequestConfig } from "@/lib/config/config";
-import type { ChatResponse } from "@/server/lib/agent/types";
-import { createWeatherRequest } from "./weatherRequest";
+import type { AgentRequestConfig } from "../config/agentRequest";
+import type { RequestWeatherTransport } from "@/lib/types";
+import { createWeatherRequest } from "../config/weatherRequest";
 import {
   ChatResponseSchema,
   ChatResponseSchemaType,
 } from "@/schemas/chatResponseSchema";
 import z from "zod";
 
-type RequestWeatherTransport = (location: {
-  city: string;
-  state: string;
-  zip: string;
-}) => Promise<ChatResponse>;
-
 export class AgentApi {
-  private readonly request: RequestWeatherTransport;
+  private readonly requestWeather: RequestWeatherTransport;
   constructor(private readonly config: AgentRequestConfig) {
-    this.request = createWeatherRequest(this.config);
+    this.requestWeather = createWeatherRequest(this.config);
   }
 
   public async getWeatherReport(
     location: LocationRequestedSchemaType,
   ): Promise<ChatResponseSchemaType> {
-    const response = await this.request(location);
-
+    const response = await this.requestWeather(location);
     return this.parseAgentRunResult(response, ChatResponseSchema);
   }
 

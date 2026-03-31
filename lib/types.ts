@@ -1,3 +1,6 @@
+import { ChatResponseSchemaType } from "@/schemas/chatResponseSchema";
+import { ChatResponse } from "@/server/lib/agent/types";
+
 export type LocationInputState = {
   city: string;
   state: string;
@@ -30,3 +33,9 @@ export type GetWeatherHook = {
     inputField: GetTargetValueField,
   ) => void;
 };
+
+export type RequestWeatherTransport = (location: {
+  city: string;
+  state: string;
+  zip: string;
+}) => Promise<ChatResponseSchemaType>;

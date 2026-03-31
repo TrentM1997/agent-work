@@ -1,4 +1,4 @@
-import type { WeatherResultsType } from "@/server/lib/types";
+import type { WeatherResultsType } from "@/lib/types";
 import { AgentMessage } from "../agent/AgentMessage";
 import AgentRunErrorAlert from "../feedback/agentRunErrorAlert";
 import ShimmerText from "../feedback/shimmerText";
