@@ -1,11 +1,11 @@
 import type { LocationRequestedSchemaType } from "@/schemas/weatherSchema";
 import type { AgentRequestConfig } from "@/lib/config/agentRequest";
-import type { ChatResponse } from "@/server/lib/agent/types";
+import type { ChatResponseSchemaType } from "@/schemas/chatResponseSchema";
 
 function createWeatherRequest(config: AgentRequestConfig) {
   return async (
     location: LocationRequestedSchemaType,
-  ): Promise<ChatResponse> => {
+  ): Promise<ChatResponseSchemaType> => {
     try {
       const request = await fetch(config.endpoint, {
         method: config.method,
@@ -19,7 +19,7 @@ function createWeatherRequest(config: AgentRequestConfig) {
         throw new Error(request.statusText);
       }
 
-      return (await request.json()) as ChatResponse;
+      return (await request.json()) as ChatResponseSchemaType;
     } catch (err) {
       return {
         ok: false,

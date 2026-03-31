@@ -9,23 +9,23 @@ export default function RenderAgentMessage({
 }: {
   results: WeatherResultsType;
 }) {
-
   switch (results.status) {
     case "pending": {
       return (
-        <Fade 
-        timeout={300}
-        in={results.status === "pending"}
-        >
-            <div>
+        <Fade timeout={300} in={results.status === "pending"}>
+          <div>
             <ShimmerText />
-            </div>
+          </div>
         </Fade>
-    );
+      );
     }
     case "ready": {
       return (
-          <AgentMessage content={results.message} />
+        <Fade in={results.status === "ready"} timeout={300}>
+          <div>
+            <AgentMessage content={results.message} />
+          </div>
+        </Fade>
       );
     }
     case "failed": {
