@@ -1,5 +1,9 @@
 import { z } from "zod";
 
+export const LocationQuerySchema = z.string();
+
+export type LocationQuerySchemaType = z.infer<typeof LocationQuerySchema>;
+
 const WindDirectionCardinalSchema = z.enum([
   "N",
   "NE",

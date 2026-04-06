@@ -1,6 +1,5 @@
-import type { LocationRequestedSchemaType } from "@/schemas/weatherSchema";
 import type { AgentRequestConfig } from "../config/agentRequest";
-import type { RequestWeatherTransport } from "@/lib/types";
+import type { ConversationMessage, RequestWeatherTransport } from "@/lib/types";
 import { createWeatherRequest } from "../config/weatherRequest";
 import {
   ChatResponseSchema,
@@ -14,10 +13,10 @@ export class AgentApi {
     this.requestWeather = createWeatherRequest(this.config);
   }
 
-  public async getWeatherReport(
-    location: LocationRequestedSchemaType,
+  public async sendConversation(
+    conversation: ConversationMessage[],
   ): Promise<ChatResponseSchemaType> {
-    const response = await this.requestWeather(location);
+    const response = await this.requestWeather(conversation);
     return this.parseAgentRunResult(response, ChatResponseSchema);
   }
 

@@ -1,41 +1,39 @@
-import { ChatResponseSchemaType } from "@/schemas/chatResponseSchema";
-import { ChatResponse } from "@/server/lib/agent/types";
+import type {
+  ChatResponseSchemaType,
+  ConversationMessageSchemaType,
+} from "@/schemas/chatResponseSchema";
 
-export type LocationInputState = {
-  city: string;
-  state: string;
-  zip: string;
-};
+export type ConversationMessage = ConversationMessageSchemaType;
 
 export type WeatherResultsType =
   | {
       status: "initial";
+      conversation?: ConversationMessage[];
     }
   | {
       status: "pending";
+      conversation?: ConversationMessage[];
     }
   | {
       status: "ready";
       message: string;
+      conversation?: ConversationMessage[];
     }
   | {
       status: "failed";
       error: string;
+      conversation?: ConversationMessage[];
     };
 
-export type GetTargetValueField = keyof LocationInputState;
-
-export type GetWeatherHook = {
+export type ChatWithAgentHook = {
+  userMessage: string;
   results: WeatherResultsType;
-  getWeather: () => Promise<void>;
+  sendMessage: () => Promise<void>;
   getInput: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement, Element>,
-    inputField: GetTargetValueField,
   ) => void;
 };
 
-export type RequestWeatherTransport = (location: {
-  city: string;
-  state: string;
-  zip: string;
-}) => Promise<ChatResponseSchemaType>;
+export type RequestWeatherTransport = (
+  conversation: ConversationMessage[],
+) => Promise<ChatResponseSchemaType>;

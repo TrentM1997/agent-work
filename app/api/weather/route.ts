@@ -1,17 +1,17 @@
 import { validateRequestBody } from "@/lib/utils/validationResult";
-import { LocationRequestedSchema } from "@/schemas/weatherSchema";
+import { ChatRequestSchema } from "@/schemas/chatResponseSchema";
 import { chat } from "@/server/lib/agent";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-  const validated = await validateRequestBody(req, LocationRequestedSchema);
+  const validated = await validateRequestBody(req, ChatRequestSchema);
 
   if (!validated.ok) {
     return validated.response;
   }
 
   try {
-    const result = await chat(validated.data);
+    const result = await chat(validated.data.conversation);
 
     return NextResponse.json(result, { status: 200 });
   } catch (err) {

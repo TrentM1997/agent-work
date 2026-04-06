@@ -1,35 +1,59 @@
-import type { WeatherResultsType } from "@/lib/types";
+import type { ConversationMessage, WeatherResultsType } from "@/lib/types";
+import { Fade, Stack } from "@mui/material";
 import { AgentMessage } from "../agent/AgentMessage";
 import AgentRunErrorAlert from "../feedback/agentRunErrorAlert";
 import ShimmerText from "../feedback/shimmerText";
-import { Fade } from "@mui/material";
+
+function getConversation(results: WeatherResultsType): ConversationMessage[] {
+  if (results.conversation?.length) {
+    return results.conversation;
+  }
+
+  if (results.status === "ready") {
+    return [{ role: "assistant", content: results.message }];
+  }
+
+  return [];
+}
 
 export default function RenderAgentMessage({
   results,
 }: {
   results: WeatherResultsType;
 }) {
+  const conversation = getConversation(results);
+
   switch (results.status) {
     case "pending": {
       return (
         <Fade timeout={300} in={results.status === "pending"}>
-          <div>
+          <Stack spacing={2} sx={{ width: "100%" }}>
+            {conversation.length > 0 ? (
+              <AgentMessage conversation={conversation} />
+            ) : null}
             <ShimmerText />
-          </div>
+          </Stack>
         </Fade>
       );
     }
     case "ready": {
       return (
         <Fade in={results.status === "ready"} timeout={300}>
-          <div>
-            <AgentMessage content={results.message} />
+          <div style={{ width: "100%" }}>
+            <AgentMessage conversation={conversation} />
           </div>
         </Fade>
       );
     }
     case "failed": {
-      return <AgentRunErrorAlert error={results.error} />;
+      return (
+        <Stack spacing={2} sx={{ width: "100%" }}>
+          {conversation.length > 0 ? (
+            <AgentMessage conversation={conversation} />
+          ) : null}
+          <AgentRunErrorAlert error={results.error} />
+        </Stack>
+      );
     }
 
     default: {

@@ -1,10 +1,10 @@
-import type { LocationRequestedSchemaType } from "@/schemas/weatherSchema";
 import type { AgentRequestConfig } from "@/lib/config/agentRequest";
 import type { ChatResponseSchemaType } from "@/schemas/chatResponseSchema";
+import type { ConversationMessage } from "@/lib/types";
 
 function createWeatherRequest(config: AgentRequestConfig) {
   return async (
-    location: LocationRequestedSchemaType,
+    conversation: ConversationMessage[],
   ): Promise<ChatResponseSchemaType> => {
     try {
       const request = await fetch(config.endpoint, {
@@ -12,10 +12,11 @@ function createWeatherRequest(config: AgentRequestConfig) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(location),
+        body: JSON.stringify({ conversation }),
       });
 
       if (!request.ok) {
+        console.log(request.json());
         throw new Error(request.statusText);
       }
 

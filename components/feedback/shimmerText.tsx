@@ -21,5 +21,5 @@ const ShimmerTypography = styled(Typography)(({ }) => ({
 }));
 
 export default function ShimmerText() {
-  return <ShimmerTypography variant="body1">Retrieving weather report...</ShimmerTypography>;
+  return <ShimmerTypography variant="body1">Thinking...</ShimmerTypography>;
 }

@@ -21,4 +21,16 @@ type ToolRequest = {
   parameters: Record<string, unknown>;
 };
 
-export type { JsonRpcResponse, JsonRpcSuccess, JsonRpcError, ToolRequest };
+type ChatMessage = {
+  role: "system" | "user" | "assistant";
+  content: string;
+  tool_name?: string;
+};
+
+export type {
+  JsonRpcResponse,
+  JsonRpcSuccess,
+  JsonRpcError,
+  ToolRequest,
+  ChatMessage,
+};

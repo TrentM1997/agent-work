@@ -1,6 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WeatherService } from "@/server/lib/modules/services/weatherService";
-import { LocationRequestedSchema } from "@/schemas/weatherSchema";
+import { LocationQuerySchema } from "@/schemas/weatherSchema";
 
 type RegisterWeatherToolsArgs = {
   server: McpServer;
@@ -17,11 +17,11 @@ export function registerWeatherTools({
       title: "Get the weather",
       description: "Get the weather from the Open Weather API",
       inputSchema: {
-        location: LocationRequestedSchema,
+        locationQuery: LocationQuerySchema,
       },
     },
-    async ({ location }) => {
-      const weather = await weatherService.getWeather(location);
+    async ({ locationQuery }) => {
+      const weather = await weatherService.getWeather(locationQuery);
 
       return {
         content: [{ type: "text", text: JSON.stringify(weather, null, 2) }],
