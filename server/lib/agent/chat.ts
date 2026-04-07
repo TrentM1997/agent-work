@@ -5,15 +5,30 @@ import { McpTransportClient } from "../modules/clients/mcpTransportClient";
 import type { ChatResponse } from "./types";
 import type { ConversationMessage } from "@/lib/types";
 
-export async function chat(
+export async function* chatStream(
   conversationHistory: ConversationMessage[],
-): Promise<ChatResponse> {
+): AsyncGenerator<string, void, void> {
   const server = spawn("npx", ["tsx", "./server/server.ts"], { shell: true });
   const client = new McpTransportClient(server);
   const conversation = new ConversationHandler(agent, client);
 
   try {
-    const message = await conversation.run(conversationHistory);
+    yield* conversation.runStream(conversationHistory);
+  } finally {
+    server.kill();
+  }
+}
+
+export async function chat(
+  conversationHistory: ConversationMessage[],
+): Promise<ChatResponse> {
+  try {
+    let message = "";
+
+    for await (const chunk of chatStream(conversationHistory)) {
+      message += chunk;
+    }
+
     return {
       ok: true,
       message,
@@ -23,7 +38,5 @@ export async function chat(
       ok: false,
       error: `${err}`,
     };
-  } finally {
-    server.kill();
   }
 }

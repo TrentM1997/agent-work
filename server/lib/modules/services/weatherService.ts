@@ -8,7 +8,6 @@ import {
   WeatherForCityResultType,
 } from "@/schemas/weatherSchema";
 import { WeatherResponseHandler } from "@/server/lib/modules/handlers/weatherResponseHandler";
-import { WeatherResponse } from "../../types";
 
 export class WeatherService {
   private readonly parser: WeatherResponseHandler;

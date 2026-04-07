@@ -36,4 +36,5 @@ export type ChatWithAgentHook = {
 
 export type RequestWeatherTransport = (
   conversation: ConversationMessage[],
+  onChunk: (message: string) => void,
 ) => Promise<ChatResponseSchemaType>;
