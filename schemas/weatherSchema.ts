@@ -85,6 +85,7 @@ export const OpenMeteoGeocodeResultSchema = z.object({
   admin1: z.string().optional(),
   latitude: z.number(),
   longitude: z.number(),
+  postcodes: z.array(z.string()).optional(),
 });
 
 export const OpenMeteoWeatherCurrentSchema = z.object({
@@ -119,6 +120,12 @@ export const GetWeatherResponseSchema = z.object({
   geocode: OpenMeteoGeocodeResultSchema,
   weather: OpenMeteoWeatherResultSchema,
 });
+
+export const GeocodeJsonSchema = z.object({
+  results: z.array(OpenMeteoGeocodeResultSchema).optional(),
+});
+
+export type GeocodeJsonSchemaType = z.infer<typeof GeocodeJsonSchema>;
 
 export type GetWeatherResponseSchemaType = z.infer<
   typeof GetWeatherResponseSchema

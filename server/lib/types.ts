@@ -27,10 +27,15 @@ type ChatMessage = {
   tool_name?: string;
 };
 
+type WeatherResponse = {
+  results?: Record<string, unknown>[];
+};
+
 export type {
   JsonRpcResponse,
   JsonRpcSuccess,
   JsonRpcError,
   ToolRequest,
   ChatMessage,
+  WeatherResponse,
 };

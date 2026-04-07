@@ -1,11 +1,14 @@
 import {
+  GeocodeJsonSchema,
   GetWeatherResponseSchema,
   GetWeatherResponseSchemaType,
   LocationQuerySchemaType,
+  OpenMeteoGeocodeResultType,
   WeatherForCityResultSchema,
   WeatherForCityResultType,
 } from "@/schemas/weatherSchema";
 import { WeatherResponseHandler } from "@/server/lib/modules/handlers/weatherResponseHandler";
+import { WeatherResponse } from "../../types";
 
 export class WeatherService {
   private readonly parser: WeatherResponseHandler;
@@ -111,7 +114,9 @@ export class WeatherService {
     return undefined;
   }
 
-  private async searchLocations(query: string): Promise<Record<string, unknown>[]> {
+  private async searchLocations(
+    query: string,
+  ): Promise<OpenMeteoGeocodeResultType[]> {
     const geocodeUrl = new URL(
       "https://geocoding-api.open-meteo.com/v1/search",
     );
@@ -127,9 +132,9 @@ export class WeatherService {
       throw new Error(`Geocoding request failed: ${geocodeRes.status}`);
     }
 
-    const geocodeJson = (await geocodeRes.json()) as {
-      results?: Record<string, unknown>[];
-    };
+    const raw = await geocodeRes.json();
+
+    const geocodeJson = GeocodeJsonSchema.parse(raw);
 
     return geocodeJson.results ?? [];
   }
@@ -179,7 +184,8 @@ export class WeatherService {
     if (queryParts.city) {
       const cityMatch = results.find(
         (result) =>
-          this.normalizeText(result.name) === this.normalizeText(queryParts.city),
+          this.normalizeText(result.name) ===
+          this.normalizeText(queryParts.city),
       );
 
       if (cityMatch) {
@@ -202,7 +208,9 @@ export class WeatherService {
     const candidates = new Set<string>();
 
     candidates.add(normalizedQuery);
-    candidates.add(normalizedQuery.replace(/,/g, " ").replace(/\s+/g, " ").trim());
+    candidates.add(
+      normalizedQuery.replace(/,/g, " ").replace(/\s+/g, " ").trim(),
+    );
 
     if (queryParts.zipCode) {
       candidates.add(queryParts.zipCode);
@@ -249,9 +257,7 @@ export class WeatherService {
       }
     }
 
-    const stateCode = stateToken
-      ? this.toStateCode(stateToken)
-      : undefined;
+    const stateCode = stateToken ? this.toStateCode(stateToken) : undefined;
 
     return {
       zipCode,
@@ -276,9 +282,7 @@ export class WeatherService {
   }
 
   private normalizeText(value: unknown): string {
-    return typeof value === "string"
-      ? value.trim().toLowerCase()
-      : "";
+    return typeof value === "string" ? value.trim().toLowerCase() : "";
   }
 }
 
