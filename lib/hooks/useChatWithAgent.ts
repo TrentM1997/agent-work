@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { startTransition, useState } from "react";
 import type {
   ChatWithAgentHook,
   ConversationMessage,
@@ -37,15 +37,35 @@ export const useChatWithAgent = (): ChatWithAgentHook => {
       status: "pending",
       conversation: nextConversation,
     });
+    setUserMessage("");
 
-    const response = await agentApi.sendConversation(nextConversation);
-    console.log(response);
+    let streamedMessage = "";
+    const response = await agentApi.sendConversation(
+      nextConversation,
+      (message) => {
+        streamedMessage = message;
+        startTransition(() => {
+          setResults({
+            status: "pending",
+            conversation: [
+              ...nextConversation,
+              { role: "assistant", content: message },
+            ],
+          });
+        });
+      },
+    );
 
     if (!response.ok) {
       setResults({
         status: "failed",
         error: response.error,
-        conversation: nextConversation,
+        conversation: streamedMessage
+          ? [
+              ...nextConversation,
+              { role: "assistant", content: streamedMessage },
+            ]
+          : nextConversation,
       });
       return;
     }
@@ -58,7 +78,6 @@ export const useChatWithAgent = (): ChatWithAgentHook => {
         { role: "assistant", content: response.message },
       ],
     });
-    setUserMessage("");
   };
 
   return {

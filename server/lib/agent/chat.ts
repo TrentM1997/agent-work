@@ -5,15 +5,51 @@ import { McpTransportClient } from "../modules/clients/mcpTransportClient";
 import type { ChatResponse } from "./types";
 import type { ConversationMessage } from "@/lib/types";
 
-export async function chat(
+const startServer = () => {
+  return spawn("npx", ["tsx", "./server/server.ts"], { shell: true });
+};
+
+let sharedServer: ReturnType<typeof startServer> | null = null;
+let sharedClient: McpTransportClient | null = null;
+
+function getSharedMcpClient() {
+  if (sharedClient) return sharedClient;
+
+  sharedServer = startServer();
+  sharedClient = new McpTransportClient(sharedServer);
+
+  sharedServer.on("exit", () => {
+    sharedServer = null;
+    sharedClient = null;
+  });
+
+  return sharedClient;
+}
+
+export async function* chatStream(
   conversationHistory: ConversationMessage[],
-): Promise<ChatResponse> {
-  const server = spawn("npx", ["tsx", "./server/server.ts"], { shell: true });
-  const client = new McpTransportClient(server);
+): AsyncGenerator<string, void, void> {
+  const client = getSharedMcpClient();
   const conversation = new ConversationHandler(agent, client);
 
   try {
-    const message = await conversation.run(conversationHistory);
+    yield* conversation.runStream(conversationHistory);
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+}
+
+export async function chat(
+  conversationHistory: ConversationMessage[],
+): Promise<ChatResponse> {
+  try {
+    let message = "";
+
+    for await (const chunk of chatStream(conversationHistory)) {
+      message += chunk;
+    }
+
     return {
       ok: true,
       message,
@@ -23,7 +59,5 @@ export async function chat(
       ok: false,
       error: `${err}`,
     };
-  } finally {
-    server.kill();
   }
 }

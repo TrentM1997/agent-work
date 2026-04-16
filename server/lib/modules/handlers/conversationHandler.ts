@@ -2,6 +2,7 @@ import { Ollama, type Message } from "ollama";
 import { McpTransportClient } from "@/server/lib/modules/clients/mcpTransportClient";
 import type { ConversationMessage } from "@/lib/types";
 import { LocationResolutionHandler } from "@/server/lib/modules/handlers/locationResolutionHandler";
+import { createModelTrace } from "@/server/lib/logging/modelTrace";
 
 export class ConversationHandler {
   private readonly locationResolver: LocationResolutionHandler;
@@ -16,6 +17,24 @@ export class ConversationHandler {
   public async run(
     conversationHistory: ConversationMessage[],
   ): Promise<string> {
+    let fullResponse = "";
+
+    for await (const chunk of this.runStream(conversationHistory)) {
+      fullResponse += chunk;
+    }
+
+    const finalReply = fullResponse.trim();
+
+    if (!finalReply) {
+      throw new Error("Agent returned an empty final answer");
+    }
+
+    return finalReply;
+  }
+
+  public async *runStream(
+    conversationHistory: ConversationMessage[],
+  ): AsyncGenerator<string, void, void> {
     const tools = await this.client.listTools();
 
     const resolution = await this.locationResolver.resolve(
@@ -24,25 +43,26 @@ export class ConversationHandler {
     );
 
     if (resolution.type === "needs_clarification") {
-      return resolution.message;
+      yield resolution.message;
+      return;
     }
 
     const toolResult = await this.client.callTool("open_weather_api", {
       locationQuery: resolution.locationQuery,
     });
 
-    return await this.writeFinalAnswer(
+    yield* this.writeFinalAnswerStream(
       conversationHistory,
       resolution.locationQuery,
       toolResult,
     );
   }
 
-  private async writeFinalAnswer(
+  private async *writeFinalAnswerStream(
     conversationHistory: ConversationMessage[],
     locationQuery: string,
     toolResult: unknown,
-  ): Promise<string> {
+  ): AsyncGenerator<string, void, void> {
     const systemPrompt = `
 You are a weather assistant.
 
@@ -70,31 +90,41 @@ Rules:
       },
     ];
 
-    const response = await this.askModel(messages);
-    const finalReply = response.trim();
-
-    if (!finalReply) {
-      throw new Error("Agent returned an empty final answer");
-    }
-
-    return finalReply;
+    yield* this.askModelStream(messages);
   }
 
-  private async askModel(messages: Message[]): Promise<string> {
+  private async *askModelStream(
+    messages: Message[],
+  ): AsyncGenerator<string, void, void> {
     const response = await this.agent.chat({
       model: "gpt-oss:120b-cloud",
       messages,
       stream: true,
     });
 
+    const trace = createModelTrace("final-answer");
     let fullResponse = "";
 
-    for await (const part of response) {
-      const chunk = part.message.content ?? "";
-      process.stdout.write(chunk);
-      fullResponse += chunk;
+    try {
+      for await (const part of response) {
+        const chunk = part.message.content ?? "";
+        if (!chunk) {
+          continue;
+        }
+
+        trace.append(chunk);
+        fullResponse += chunk;
+        yield chunk;
+      }
+
+      trace.flush();
+    } catch (error) {
+      trace.fail(error);
+      throw error;
     }
 
-    return fullResponse;
+    if (!fullResponse.trim()) {
+      throw new Error("Agent returned an empty final answer");
+    }
   }
 }

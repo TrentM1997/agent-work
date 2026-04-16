@@ -1,4 +1,5 @@
 import { Ollama, type Message } from "ollama";
+import { createModelTrace } from "@/server/lib/logging/modelTrace";
 import { z } from "zod";
 import type { ConversationMessage } from "@/lib/types";
 
@@ -80,15 +81,26 @@ Valid outputs:
       stream: true,
     });
 
+    const trace = createModelTrace("location-resolution");
     let fullResponse = "";
 
-    for await (const part of response) {
-      const chunk = part.message.content ?? "";
-      process.stdout.write(chunk);
-      fullResponse += chunk;
-    }
+    try {
+      for await (const part of response) {
+        const chunk = part.message.content ?? "";
+        if (!chunk) {
+          continue;
+        }
 
-    return fullResponse;
+        trace.append(chunk);
+        fullResponse += chunk;
+      }
+
+      trace.flush();
+      return fullResponse;
+    } catch (error) {
+      trace.fail(error);
+      throw error;
+    }
   }
 
   private parseResolution(response: string): LocationResolution | null {

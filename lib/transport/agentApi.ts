@@ -15,8 +15,9 @@ export class AgentApi {
 
   public async sendConversation(
     conversation: ConversationMessage[],
+    onChunk: (message: string) => void,
   ): Promise<ChatResponseSchemaType> {
-    const response = await this.requestWeather(conversation);
+    const response = await this.requestWeather(conversation, onChunk);
     return this.parseAgentRunResult(response, ChatResponseSchema);
   }
 

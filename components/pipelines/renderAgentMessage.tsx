@@ -1,8 +1,9 @@
 import type { ConversationMessage, WeatherResultsType } from "@/lib/types";
 import { Fade, Stack } from "@mui/material";
-import { AgentMessage } from "../agent/AgentMessage";
 import AgentRunErrorAlert from "../feedback/agentRunErrorAlert";
 import ShimmerText from "../feedback/shimmerText";
+import ChatContainer from "../chat/chatContainer";
+import ChatStream from "../chat/chatStream";
 
 function getConversation(results: WeatherResultsType): ConversationMessage[] {
   if (results.conversation?.length) {
@@ -29,7 +30,7 @@ export default function RenderAgentMessage({
         <Fade timeout={300} in={results.status === "pending"}>
           <Stack spacing={2} sx={{ width: "100%" }}>
             {conversation.length > 0 ? (
-              <AgentMessage conversation={conversation} />
+                <ChatStream transcript={conversation} />
             ) : null}
             <ShimmerText />
           </Stack>
@@ -39,9 +40,7 @@ export default function RenderAgentMessage({
     case "ready": {
       return (
         <Fade in={results.status === "ready"} timeout={300}>
-          <div style={{ width: "100%" }}>
-            <AgentMessage conversation={conversation} />
-          </div>
+                <ChatStream transcript={conversation} />
         </Fade>
       );
     }
@@ -49,7 +48,7 @@ export default function RenderAgentMessage({
       return (
         <Stack spacing={2} sx={{ width: "100%" }}>
           {conversation.length > 0 ? (
-            <AgentMessage conversation={conversation} />
+                <ChatStream transcript={conversation} />
           ) : null}
           <AgentRunErrorAlert error={results.error} />
         </Stack>

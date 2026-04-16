@@ -30,12 +30,11 @@ export default async function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <AppRouterCacheProvider options={{ enableCssLayer: true}}>
-
-        <ThemeProvider theme={theme}>
-          <body className="min-h-full flex flex-col">{children}</body>
-        </ThemeProvider>
-      </AppRouterCacheProvider>
+      <body className="min-h-full flex flex-col">
+        <AppRouterCacheProvider options={{ enableCssLayer: true }}>
+          <ThemeProvider theme={theme}>{children}</ThemeProvider>
+        </AppRouterCacheProvider>
+      </body>
     </html>
   );
 }
