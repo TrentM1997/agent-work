@@ -5,13 +5,16 @@ import type { JSX, PropsWithChildren } from "react";
 
 export default function ChatContainer({ children }: PropsWithChildren): JSX.Element {
   return (
-    <Container disableGutters>
+    <Container
+    sx={{
+      paddingY: 2
+    }}
+    >
       <Stack
         spacing={2}
         sx={{
           width: "100%",
           height: "60svh",
-          paddingY: 2
         }}
       >
         {children}
