@@ -2,6 +2,7 @@ import { Ollama, type Message } from "ollama";
 import { McpTransportClient } from "@/server/lib/modules/clients/mcpTransportClient";
 import type { ConversationMessage } from "@/lib/types";
 import { LocationResolutionHandler } from "@/server/lib/modules/handlers/locationResolutionHandler";
+import { createModelTrace } from "@/server/lib/logging/modelTrace";
 
 export class ConversationHandler {
   private readonly locationResolver: LocationResolutionHandler;
@@ -101,17 +102,25 @@ Rules:
       stream: true,
     });
 
+    const trace = createModelTrace("final-answer");
     let fullResponse = "";
 
-    for await (const part of response) {
-      const chunk = part.message.content ?? "";
-      if (!chunk) {
-        continue;
+    try {
+      for await (const part of response) {
+        const chunk = part.message.content ?? "";
+        if (!chunk) {
+          continue;
+        }
+
+        trace.append(chunk);
+        fullResponse += chunk;
+        yield chunk;
       }
 
-      process.stdout.write(chunk);
-      fullResponse += chunk;
-      yield chunk;
+      trace.flush();
+    } catch (error) {
+      trace.fail(error);
+      throw error;
     }
 
     if (!fullResponse.trim()) {

@@ -6,6 +6,8 @@ import type { ConversationMessage } from "@/lib/types";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
+// unused component, delete file soon
+
 type AgentMessageProps =
   | {
       content: string;
@@ -22,7 +24,7 @@ export function AgentMessage({ content, conversation }: AgentMessageProps) {
   ];
 
   return (
-    <Stack spacing={2} sx={{ width: "100%" }}>
+    <Stack spacing={2} sx={{ width: "100%", height: "60svh", overflowX: "hidden", overflowY: "scroll" }}>
       {transcript.map((message, index) => {
         const isUser = message.role === "user";
 

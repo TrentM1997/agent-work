@@ -1,4 +1,5 @@
 "use client";
+import ChatContainer from "@/components/chat/chatContainer";
 import RenderAgentMessage from "@/components/pipelines/renderAgentMessage";
 import { useChatWithAgent } from "@/lib/hooks/useChatWithAgent";
 import Box from "@mui/material/Box";
@@ -85,37 +86,39 @@ export default function Home() {
             py: 3,
           }}
         >
-          {results.conversation?.length ? (
-            <RenderAgentMessage results={results} />
-          ) : (
-            <Stack
-              alignItems="center"
-              justifyContent="center"
-              sx={{ height: "100%", minHeight: 320, textAlign: "center" }}
-            >
-              <Typography
-                sx={{
-                  color: "rgba(255, 255, 255, 0.94)",
-                  fontSize: { xs: "1.4rem", md: "1.8rem" },
-                  fontWeight: 700,
-                  letterSpacing: "-0.03em",
-                }}
+          <ChatContainer>
+            {results.conversation?.length ? (
+              <RenderAgentMessage results={results} />
+            ) : (
+              <Stack
+                alignItems="center"
+                justifyContent="center"
+                sx={{ height: "100%", minHeight: 320, textAlign: "center" }}
               >
-                Start a conversation
-              </Typography>
-              <Typography
-                sx={{
-                  mt: 1.5,
-                  maxWidth: 560,
-                  color: "rgba(148, 163, 184, 0.88)",
-                  lineHeight: 1.7,
-                }}
-              >
-                Try asking something like “What&apos;s the weather in Chicago?”
-                or “Is it a good day for a walk in Seattle?”
-              </Typography>
-            </Stack>
-          )}
+                <Typography
+                  sx={{
+                    color: "rgba(255, 255, 255, 0.94)",
+                    fontSize: { xs: "1.4rem", md: "1.8rem" },
+                    fontWeight: 700,
+                    letterSpacing: "-0.03em",
+                  }}
+                >
+                  Start a conversation
+                </Typography>
+                <Typography
+                  sx={{
+                    mt: 1.5,
+                    maxWidth: 560,
+                    color: "rgba(148, 163, 184, 0.88)",
+                    lineHeight: 1.7,
+                  }}
+                >
+                  Try asking something like “What&apos;s the weather in
+                  Chicago?” or “Is it a good day for a walk in Seattle?”
+                </Typography>
+              </Stack>
+            )}
+          </ChatContainer>
         </Box>
 
         <Box
