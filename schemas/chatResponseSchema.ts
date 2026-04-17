@@ -1,3 +1,4 @@
+import { MCP_PROTOCOL_VERSION } from "@/server/lib/init/mcpProtocolVersion";
 import z from "zod";
 
 export const ConversationMessageSchema = z.object({
@@ -24,6 +25,20 @@ export const ToolRequestSchema = z.object({
   tool_name: z.string().min(1),
   parameters: z.record(z.string(), z.unknown()),
 });
+
+export const McpImplementationSchema = z.object({
+  name: z.string().min(1),
+  version: z.string().min(1),
+});
+
+export const McpInitializeResultSchema = z.object({
+  protocolVersion: z.literal(MCP_PROTOCOL_VERSION),
+  capabilities: z.record(z.string(), z.unknown()),
+  serverInfo: McpImplementationSchema,
+  instructions: z.string().optional(),
+});
+
+export type McpInitializeResult = z.infer<typeof McpInitializeResultSchema>;
 
 export type ConversationMessageSchemaType = z.infer<
   typeof ConversationMessageSchema

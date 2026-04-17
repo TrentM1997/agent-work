@@ -1,35 +1,15 @@
-import { spawn } from "child_process";
 import { agent } from "@/server/lib/agent";
 import { ConversationHandler } from "@/server/lib/modules/handlers/conversationHandler";
-import { McpTransportClient } from "../modules/clients/mcpTransportClient";
 import type { ChatResponse } from "./types";
 import type { ConversationMessage } from "@/lib/types";
+import { McpClientManager } from "../modules/clients/mcpClientManager";
 
-const startServer = () => {
-  return spawn("npx", ["tsx", "./server/server.ts"], { shell: true });
-};
-
-let sharedServer: ReturnType<typeof startServer> | null = null;
-let sharedClient: McpTransportClient | null = null;
-
-function getSharedMcpClient() {
-  if (sharedClient) return sharedClient;
-
-  sharedServer = startServer();
-  sharedClient = new McpTransportClient(sharedServer);
-
-  sharedServer.on("exit", () => {
-    sharedServer = null;
-    sharedClient = null;
-  });
-
-  return sharedClient;
-}
+const mcpClientManager = new McpClientManager();
 
 export async function* chatStream(
   conversationHistory: ConversationMessage[],
 ): AsyncGenerator<string, void, void> {
-  const client = getSharedMcpClient();
+  const client = await mcpClientManager.getClient();
   const conversation = new ConversationHandler(agent, client);
 
   try {

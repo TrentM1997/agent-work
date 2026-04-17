@@ -1,5 +1,7 @@
 import type { ChildProcessWithoutNullStreams } from "child_process";
 import type { JsonRpcResponse } from "@/server/lib/types";
+import { McpInitializeResultSchema } from "@/schemas/chatResponseSchema";
+import { MCP_PROTOCOL_VERSION } from "../../init/mcpProtocolVersion";
 
 export class McpTransportClient {
   private nextId = 1;
@@ -11,9 +13,60 @@ export class McpTransportClient {
       reject: (reason?: unknown) => void;
     }
   >();
+  private initialized = false;
+  private initPromise: Promise<void> | null = null;
 
   constructor(private readonly server: ChildProcessWithoutNullStreams) {
     this.setupServerListeners();
+  }
+
+  async initialize(): Promise<void> {
+    if (this.initialized) {
+      return;
+    }
+
+    if (this.initPromise) {
+      return this.initPromise;
+    }
+
+    this.initPromise = (async () => {
+      const rawResult = await this.sendMcpRequest({
+        jsonrpc: "2.0",
+        id: this.nextRequestId(),
+        method: "initialize",
+        params: {
+          protocolVersion: MCP_PROTOCOL_VERSION,
+          capabilities: {},
+          clientInfo: {
+            name: "weather-web-app",
+            version: "0.1.0",
+          },
+        },
+      });
+
+      McpInitializeResultSchema.parse(rawResult);
+
+      this.sendNotification({
+        jsonrpc: "2.0",
+        method: "notifications/initialized",
+      });
+
+      this.initialized = true;
+    })().catch((error) => {
+      this.initialized = false;
+      this.initPromise = null;
+      throw error;
+    });
+
+    return this.initPromise;
+  }
+
+  private sendNotification(message: {
+    jsonrpc: "2.0";
+    method: string;
+    params?: Record<string, unknown>;
+  }) {
+    this.server.stdin.write(JSON.stringify(message) + "\n");
   }
 
   public async listTools(): Promise<unknown> {

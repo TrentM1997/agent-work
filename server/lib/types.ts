@@ -31,6 +31,14 @@ type WeatherResponse = {
   results?: Record<string, unknown>[];
 };
 
+type TransportPendingType = Map<
+  number,
+  {
+    resolve: (value: unknown) => void;
+    reject: (reason?: unknown) => void;
+  }
+>;
+
 export type {
   JsonRpcResponse,
   JsonRpcSuccess,
@@ -38,4 +46,5 @@ export type {
   ToolRequest,
   ChatMessage,
   WeatherResponse,
+  TransportPendingType,
 };
