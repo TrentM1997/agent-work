@@ -40,7 +40,9 @@ export default function RenderAgentMessage({
     case "ready": {
       return (
         <Fade in={results.status === "ready"} timeout={300}>
+          <Stack spacing={2} sx={{ width: "100%" }}>
                 <ChatStream transcript={conversation} />
+          </Stack>
         </Fade>
       );
     }

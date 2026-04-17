@@ -16,7 +16,7 @@ export default function ChatStream({ transcript }: ChatStreamProps) {
         index={index} 
         message={message} 
         isUser={isUser} 
-        key={message.content}
+        key={`${message.role}-${index}`}
         />;
       })}
     </React.Fragment>
